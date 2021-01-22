@@ -1,5 +1,7 @@
-import ctypes, sys
+import ctypes, sys, os
 import requests, re
+
+print("updating GITHUB hosts")
 
 def is_admin():
     try:
@@ -9,7 +11,7 @@ def is_admin():
 
 if not is_admin():
     sys.stderr.write("Cannot Retrive the Administrator Permission!")
-    exit(0x233)
+    exit(-1)
 
 hosts_path = "C:\Windows\System32\drivers\etc\hosts"
 gh_hosts_url = "https://cdn.jsdelivr.net/gh/521xueweihan/GitHub520@main/hosts"
@@ -38,3 +40,5 @@ for i in range(len(hosts_content)-1):
 hosts_file.seek(0)
 hosts_file.writelines(hosts_content)
 hosts_file.close()
+
+os.system("ipconfig /flushdns")
