@@ -1,25 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import sys
+import sys, os
 import requests
 import platform
 
 running_platform = platform.system()
-
-''' 
-# I don't think checking permission here is necessary.
-# If permission denied, no changes would be applied.
-
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-if not is_admin():
-    sys.stderr.write("Cannot Retrive the Administrator Permission!")
-    exit(-1)
-'''
 
 if len(sys.argv) > 1:
     hosts_path = sys.argv[1]
@@ -27,6 +12,12 @@ elif running_platform == 'Windows':
     hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
 else:
     hosts_path = "/etc/hosts"
+
+if not (os.access(hosts_path, os.W_OK) and os.access(hosts_path, os.R_OK)):
+    print(f'File {hosts_path} access denied.')
+    sys.exit(1)
+
+print("Updating GitHub hosts...")
 
 gh_hosts_url = "https://cdn.jsdelivr.net/gh/521xueweihan/GitHub520@main/hosts"
 start_line = "# GitHub520 Host Start\n"
@@ -39,8 +30,6 @@ hosts_file = open(hosts_path,"r+")
 hosts_content = hosts_file.readlines() if hosts_file.readable() else []
 
 bk = hosts_content
-
-print("updating GITHUB hosts")
 
 try:    # if github hosts exists
     idx_start = hosts_content.index(start_line)
@@ -57,6 +46,7 @@ hosts_file.seek(0)
 hosts_file.writelines(hosts_content)
 hosts_file.close()
 
+print(f'{hosts_path} is updated.')
+
 if running_platform == 'Windows':
-    import os
     sys.exit(os.system("ipconfig /flushdns"))
