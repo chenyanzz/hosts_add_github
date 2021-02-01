@@ -1,19 +1,24 @@
-import ctypes, sys, os
-import requests, re
+#!/usr/bin/python3
 
-print("updating GITHUB hosts")
+import sys, os
+import requests
+import platform
 
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
+running_platform = platform.system()
 
-if not is_admin():
-    sys.stderr.write("Cannot Retrive the Administrator Permission!")
-    exit(-1)
+if len(sys.argv) > 1:
+    hosts_path = sys.argv[1]
+elif running_platform == 'Windows':
+    hosts_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+else:
+    hosts_path = "/etc/hosts"
 
-hosts_path = "C:\Windows\System32\drivers\etc\hosts"
+if not (os.access(hosts_path, os.W_OK) and os.access(hosts_path, os.R_OK)):
+    print(f'File {hosts_path} access denied.')
+    sys.exit(1)
+
+print("Updating GitHub hosts...")
+
 gh_hosts_url = "https://cdn.jsdelivr.net/gh/521xueweihan/GitHub520@main/hosts"
 start_line = "# GitHub520 Host Start\n"
 end_line = "# GitHub520 Host End\n"
@@ -41,4 +46,7 @@ hosts_file.seek(0)
 hosts_file.writelines(hosts_content)
 hosts_file.close()
 
-os.system("ipconfig /flushdns")
+print(f'{hosts_path} is updated.')
+
+if running_platform == 'Windows':
+    sys.exit(os.system("ipconfig /flushdns"))
