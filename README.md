@@ -6,4 +6,4 @@ Using Hosts data from [repo 'GitHub520'](https://github.com/521xueweihan/GitHub5
 
 On Windows, you can add `pythonw X:\path\to\update_gh_hosts.py` to your [Windows Task Schedule]
 
-On a Unix-like OS, you can add `* */2 * * * /path/to/update_gh_hosts.py` to root crontab
+On a Unix-like OS, you can add `@hourly /path/to/update_gh_hosts.py` to root crontab
